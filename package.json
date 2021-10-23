@@ -4,7 +4,7 @@
   "description": "reload PM2 managed processes according to rules",
   "main": "main.js",
   "bin": {
-    "pm2-reload": "main.js"
+    "pm2-supervisor": "main.js"
   },
   "directories": {
     "lib": "lib"
