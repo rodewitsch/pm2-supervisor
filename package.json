@@ -1,5 +1,29 @@
 {
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+  "name": "@rodewitsch/pm2-supervisor",
+  "version": "1.0.0",
+  "description": "reload PM2 managed processes according to rules",
+  "main": "main.js",
+  "bin": {
+    "pm2-reload": "main.js"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rodewitsch/pm2-supervisor.git"
+  },
+  "keywords": [
+    "pm2",
+    "cli"
+  ],
+  "author": "RDM",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rodewitsch/pm2-supervisor/issues"
+  },
+  "homepage": "https://github.com/rodewitsch/pm2-supervisor#readme"
 }
