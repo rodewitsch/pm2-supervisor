@@ -1,7 +1,7 @@
 const { log } = require('./lib/log');
-const { checkRulesFileExists, getRules } = require('./lib/rules');
-const { checkPM2ModuleExists, pm2Reload } = require('./lib/pm2');
-const { makeRequest } = require('./lib/request');
+const { checkRulesFileExists, getRules, executeRule } = require('./lib/rules');
+const { checkPM2ModuleExists } = require('./lib/pm2');
+
 const rulesFileName = 'rules.json';
 
 async function main() {
@@ -12,17 +12,12 @@ async function main() {
 
     const rules = getRules(rulesFileName);
 
-    if (rules && rules.length === 0) console.log('No rules in ' + rulesFileName);
+    if (rules && rules.length === 0)
+      console.log('No rules in ' + rulesFileName);
 
-    for (const rule of rules) {
-      switch (rule.type) {
-        case 'httpStatus': {
-          const { statusCode } = await makeRequest(rule);
-          if (statusCode === rule.statusCode) await pm2Reload(rule.serviceName);
-          break;
-        }
-      }
-    }
+    // TODO: rules syntax validator
+
+    for (const rule of rules) await executeRule(rule);
     log('------------------pm2-supervisor stopped------------------');
   } catch (err) {
     log('------------------pm2-supervisor errored------------------', 'error');
