@@ -20,6 +20,7 @@ async function main() {
     for (const rule of rules) await executeRule(rule);
     log('------------------pm2-supervisor stopped------------------');
   } catch (err) {
+    log(err.message, 'error');
     log('------------------pm2-supervisor errored------------------', 'error');
   }
 }
