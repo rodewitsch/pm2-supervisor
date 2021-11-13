@@ -2,11 +2,13 @@ const { log } = require('./lib/log');
 const { checkRulesFileExists, getRules, executeRule } = require('./lib/rules');
 const { checkPM2ModuleExists } = require('./lib/pm2');
 const { delay, getMiliseconds } = require('./lib/time');
+const { processingArguments } = require('./lib/args');
 
 const rulesFileName = 'rules.json';
 
 async function main() {
   try {
+    if (!processingArguments(process.argv.splice(2))) return;
     log('------------------pm2-supervisor started------------------');
     checkRulesFileExists(rulesFileName);
     checkPM2ModuleExists();
