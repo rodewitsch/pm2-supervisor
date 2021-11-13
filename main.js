@@ -1,7 +1,7 @@
 const { log } = require('./lib/log');
 const { checkRulesFileExists, getRules, executeRule } = require('./lib/rules');
 const { checkPM2ModuleExists } = require('./lib/pm2');
-const { delay } = require('./lib/time');
+const { delay, getMiliseconds } = require('./lib/time');
 
 const rulesFileName = 'rules.json';
 
@@ -19,10 +19,13 @@ async function main() {
     // TODO: rules syntax validator
 
     for (const rule of rules) {
-      await executeRule(rule);
-      await delay(1000);
+      if (rule.interval) {
+        setInterval(() => executeRule(rule), getMiliseconds(rule.interval));
+      } else {
+        await executeRule(rule);
+      }
+      await delay(getMiliseconds('5s'));
     }
-    log('------------------pm2-supervisor stopped------------------');
   } catch (err) {
     log(err.message, 'error');
     log('------------------pm2-supervisor errored------------------', 'error');
