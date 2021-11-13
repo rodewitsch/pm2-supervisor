@@ -1,22 +1,31 @@
 const { log } = require('./lib/log');
-const { checkRulesFileExists, getRules, executeRule } = require('./lib/rules');
 const { checkPM2ModuleExists } = require('./lib/pm2');
 const { delay, getMiliseconds } = require('./lib/time');
 const { processingArguments } = require('./lib/args');
-
-const rulesFileName = 'rules.json';
+const {
+  checkRulesFileExists,
+  getRules,
+  executeRule,
+  createEmptyRulesFile,
+  validateRules,
+} = require('./lib/rules');
 
 async function main() {
   try {
+    if (!checkRulesFileExists()) {
+      log('rules.json is not exists');
+      createEmptyRulesFile();
+      log('empty rules.json created successfully');
+    }
     if (!processingArguments(process.argv.splice(2))) return;
     log('------------------pm2-supervisor started------------------');
-    checkRulesFileExists(rulesFileName);
     checkPM2ModuleExists();
 
-    const rules = getRules(rulesFileName);
+    const rules = getRules();
 
-    if (rules && rules.length === 0)
-      console.log('No rules in ' + rulesFileName);
+    if (rules && rules.length === 0) console.log('No rules in rules file');
+
+    validateRules(rules);
 
     // TODO: rules syntax validator
 
