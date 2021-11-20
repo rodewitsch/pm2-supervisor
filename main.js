@@ -25,17 +25,23 @@ async function main() {
 
     if (rules && rules.length === 0) console.log('No rules in rules file');
 
-    validateRules(rules);
+    // validateRules(rules);
 
     // TODO: rules syntax validator
 
     for (const rule of rules) {
-      if (rule.interval) {
-        setInterval(() => executeRule(rule), getMiliseconds(rule.interval));
-      } else {
-        await executeRule(rule);
-      }
-      await delay(getMiliseconds('5s'));
+      do {
+        const skipped = await executeRule(
+          rule,
+          rule.options.skip && rule.options.skipped !== rule.options.skip
+        );
+        if (rule.options.skip) {
+          rule.options.skipped = rule.options.skipped + 1 || 1;
+          if (!skipped) rule.options.skipped = 1;
+        }
+        if (rule.options.interval)
+          await delay(getMiliseconds(rule.options.interval));
+      } while (rule.options.interval);
     }
   } catch (err) {
     log(err.message, 'error');
