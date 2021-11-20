@@ -1,31 +1,56 @@
 const { log } = require('./lib/log');
-const { checkRulesFileExists, getRules, executeRule } = require('./lib/rules');
-const { checkPM2ModuleExists } = require('./lib/pm2');
+const { checkPM2ModuleExists, reloadPM2Process } = require('./lib/pm2');
 const { delay, getMiliseconds } = require('./lib/time');
-
-const rulesFileName = 'rules.json';
+const { processingArguments } = require('./lib/args');
+const {
+  checkRulesFileExists,
+  getRules,
+  executeRule,
+  createEmptyRulesFile,
+  validateRules,
+} = require('./lib/rules');
 
 async function main() {
   try {
+    if (!checkRulesFileExists()) {
+      log('rules.json is not exists');
+      createEmptyRulesFile();
+      log('empty rules.json created successfully');
+    }
+    if (!processingArguments(process.argv.splice(2))) return;
     log('------------------pm2-supervisor started------------------');
-    checkRulesFileExists(rulesFileName);
     checkPM2ModuleExists();
 
-    const rules = getRules(rulesFileName);
+    const rules = getRules();
 
-    if (rules && rules.length === 0)
-      console.log('No rules in ' + rulesFileName);
+    if (rules && rules.length === 0) console.log('No rules in rules file');
+
+    // validateRules(rules);
 
     // TODO: rules syntax validator
 
-    for (const rule of rules) {
-      if (rule.interval) {
-        setInterval(() => executeRule(rule), getMiliseconds(rule.interval));
-      } else {
-        await executeRule(rule);
-      }
-      await delay(getMiliseconds('5s'));
-    }
+    rules.forEach(async (rule) => {
+      do {
+        const ruleStatus = await executeRule(rule);
+        if (!rule.options.skip && ruleStatus.matched) {
+          await reloadPM2Process(ruleStatus.name);
+        }
+        if (rule.options.skip) {
+          rule.options.skipped = rule.options.skipped + 1 || 1;
+          if (
+            ruleStatus.matched &&
+            rule.options.skip === rule.options.skipped
+          ) {
+            await reloadPM2Process(ruleStatus.name);
+            rule.options.skipped = 1;
+          }
+          if (!ruleStatus.matched) rule.options.skipped = 1;
+        }
+        if (rule.options.interval) {
+          await delay(getMiliseconds(rule.options.interval));
+        }
+      } while (rule.options.interval);
+    });
   } catch (err) {
     log(err.message, 'error');
     log('------------------pm2-supervisor errored------------------', 'error');
