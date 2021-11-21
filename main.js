@@ -19,21 +19,25 @@ async function main() {
     }
     if (!processingArguments(process.argv.splice(2))) return;
     log('------------------pm2-supervisor started------------------');
-    checkPM2ModuleExists();
+    if (!checkPM2ModuleExists()) throw new Error('PM2 module not found');
 
     const rules = getRules();
 
     if (rules && rules.length === 0) console.log('No rules in rules file');
 
-    // validateRules(rules);
-
-    // TODO: rules syntax validator
+    validateRules(rules);
 
     rules.forEach(async (rule) => {
       do {
         const ruleStatus = await executeRule(rule);
+        if (!ruleStatus) continue;
         if (!rule.options.skip && ruleStatus.matched) {
-          await reloadPM2Process(ruleStatus.name);
+          try {
+            await reloadPM2Process(ruleStatus.name);
+            log(`the process "${processName}" reloaded successfully`);
+          } catch (e) {
+            log(e.message.replace(/[\r\n]/g, ' ').trim(), 'error');
+          }
         }
         if (rule.options.skip) {
           rule.options.skipped = rule.options.skipped + 1 || 1;
@@ -41,7 +45,12 @@ async function main() {
             ruleStatus.matched &&
             rule.options.skip === rule.options.skipped
           ) {
-            await reloadPM2Process(ruleStatus.name);
+            try {
+              await reloadPM2Process(ruleStatus.name);
+              log(`the process "${processName}" reloaded successfully`);
+            } catch (e) {
+              log(e.message.replace(/[\r\n]/g, ' ').trim(), 'error');
+            }
             rule.options.skipped = 1;
           }
           if (!ruleStatus.matched) rule.options.skipped = 1;
@@ -51,8 +60,8 @@ async function main() {
         }
       } while (rule.options.interval);
     });
-  } catch (err) {
-    log(err.message, 'error');
+  } catch (e) {
+    log(e.message, 'error');
     log('------------------pm2-supervisor errored------------------', 'error');
   }
 }
