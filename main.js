@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { log } = require('./lib/log');
 const { checkPM2ModuleExists, reloadPM2Process } = require('./lib/pm2');
 const { delay, getMiliseconds } = require('./lib/time');
