@@ -8,9 +8,7 @@
 
 <p>A utility for periodically checking the availability of services launched by the pm2 process manager. Allows you to restart services in the event of a case described in the list of restart rules.</p>
 
-<hr>
 <h2>Installation pm2-supervisor</h2>
-<hr>
 
 With NPM:
 
@@ -30,9 +28,7 @@ With NPM from Github:
 npm i -g git+https://github.com/rodewitsch/pm2-supervisor.git
 ```
 
-<hr>
 <h2>Start with systemd</h2>
-<hr>
 
 <pre>
 [Unit]
@@ -49,10 +45,8 @@ Restart=on-failure
 WantedBy=multi-user.target
 </pre>
 
-
-<hr>
 <h2>Usage commands</h2>
-<hr>
+
 <table>
   <tr>
     <th>Command</th>
@@ -84,9 +78,8 @@ WantedBy=multi-user.target
   </tr>
 </table>
 
-<hr>
 <h2>Check types</h2>
-<hr>
+
  <ul>
     <li>
         <a href="#httpStatus">httpStatus</a>
