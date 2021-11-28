@@ -36,7 +36,7 @@ async function main() {
         if (!rule.options.skip && ruleStatus.matched) {
           try {
             await reloadPM2Process(ruleStatus.name);
-            log(`the process "${processName}" reloaded successfully`);
+            log(`the process "${ruleStatus.name}" reloaded successfully`);
           } catch (e) {
             log(e.message.replace(/[\r\n]/g, ' ').trim(), 'error');
           }
@@ -49,7 +49,7 @@ async function main() {
           ) {
             try {
               await reloadPM2Process(ruleStatus.name);
-              log(`the process "${processName}" reloaded successfully`);
+              log(`the process "${ruleStatus.name}" reloaded successfully`);
             } catch (e) {
               log(e.message.replace(/[\r\n]/g, ' ').trim(), 'error');
             }

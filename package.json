@@ -20,7 +20,7 @@
     "pm2",
     "cli"
   ],
-  "author": "RDM",
+  "author": "rodewitsch",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rodewitsch/pm2-supervisor/issues"
