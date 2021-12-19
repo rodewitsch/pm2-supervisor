@@ -1,6 +1,6 @@
 {
   "name": "@rodewitsch/pm2-supervisor",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "reload PM2 managed processes according to rules",
   "main": "main.js",
   "bin": {
