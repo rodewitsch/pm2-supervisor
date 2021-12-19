@@ -25,7 +25,7 @@ async function main() {
 
     const rules = getRules();
 
-    if (rules && rules.length === 0) console.log('No rules in rules file');
+    if (rules && rules.length === 0) log('No rules in rules file', 'error');
 
     validateRules(rules);
 
@@ -36,7 +36,7 @@ async function main() {
         if (!rule.options.skip && ruleStatus.matched) {
           try {
             await reloadPM2Process(ruleStatus.name);
-            log(`the process "${ruleStatus.name}" reloaded successfully`);
+            log(`the process "${ruleStatus.name}" reloaded successfully ${new Date()}`);
           } catch (e) {
             log(e.message.replace(/[\r\n]/g, ' ').trim(), 'error');
           }
@@ -49,7 +49,7 @@ async function main() {
           ) {
             try {
               await reloadPM2Process(ruleStatus.name);
-              log(`the process "${ruleStatus.name}" reloaded successfully`);
+              log(`the process "${ruleStatus.name}" reloaded successfully ${new Date()}`);
             } catch (e) {
               log(e.message.replace(/[\r\n]/g, ' ').trim(), 'error');
             }
